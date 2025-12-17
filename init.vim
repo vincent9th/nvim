@@ -17,7 +17,8 @@ if(has("win32") || has("win64") || has("win95") || has("win16"))
 else
     let g:islinux = 1
     "call plug#begin('~/.vim/plugged')
-    call plug#begin('~/source/vim.class.d/vim-plugged')
+    "call plug#begin('~/source/vim.class.d/vim-plugged')
+    call plug#begin('~/workspace/vim.class.d/vim-plugged')
 
 let g:clipboard = {
       \   'name': 'myClipboard',
@@ -32,6 +33,8 @@ let g:clipboard = {
       \   'cache_enabled': 0,
       \ }
 endif
+
+let g:copilot_proxy='http://192.168.110.1:9098'
 
 Plug 'Yggdroot/indentLine'
 Plug 'scrooloose/nerdcommenter'
@@ -92,6 +95,16 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'ludovicchabant/vim-gutentags'
 Plug 'skywind3000/gutentags_plus'
 
+Plug 'zbirenbaum/copilot.lua'
+
+"Plug 'nvim-lua/plenary.nvim'
+"Plug 'CopilotC-Nvim/CopilotChat.nvim', { 'branch': 'canary' }
+
+Plug 'nvim-lua/plenary.nvim'
+Plug 'greggh/claude-code.nvim'
+" After installing, add this to your init.vim:
+" lua require('claude-code').setup()
+
 " Initialize plugin system
 call plug#end()
 
@@ -127,6 +140,8 @@ colorscheme molokai
 
 set tags=./.tags;,.tags
 
+nnoremap <silent> [a :prev<CR>
+nnoremap <silent> ]a :next<CR>
 nnoremap <silent> [b :bprevious<CR>
 nnoremap <silent> ]b :bnext<CR>
 nnoremap <silent> [B :bfirst<CR>
@@ -153,6 +168,7 @@ inoremap <c-z> <esc>ui
 lua << EOF
     require("treesitter_init")
     require("coc_config")
+    require('claude-code').setup()
 EOF
 
 
@@ -160,6 +176,9 @@ EOF
 "----------------------------------------------------
 " gutentags
 "----------------------------------------------------
+
+" for debug
+"let g:gutentags_trace = 1
 
 " gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
 let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
@@ -172,9 +191,10 @@ let s:vim_tags = expand('~/.cache/tags')
 let g:gutentags_cache_dir = s:vim_tags
 
 " 配置 ctags 的参数
-let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
-let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extras=+q']
+let g:gutentags_ctags_extra_args = ['--c++-kinds=+px']
 let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
 
 " 检测 ~/.cache/tags 不存在就新建
 if !isdirectory(s:vim_tags)
